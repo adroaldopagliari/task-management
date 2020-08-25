@@ -1,15 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './task.model';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+import { Task } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private tasksService: TasksService) { }
 
-  @Get()
+  /*@Get()
   @UsePipes(ValidationPipe)
   getTasks(@Query() filterDTO: GetTasksFilterDTO): Task[] {
     if (Object.keys(filterDTO).length) {
@@ -17,13 +17,6 @@ export class TasksController {
     }
 
     return this.tasksService.getAllTasks();
-  }
-
-  @Get('/:id')
-  getTaskById(@Param('id') id: string): Task {
-    const task = this.tasksService.getTaskById(id);
-
-    return task;
   }
 
   @Post()
@@ -45,6 +38,13 @@ export class TasksController {
     @Body('status', TaskStatusValidationPipe) status: TaskStatus
   ): Task {
     const task = this.tasksService.updateTaskStatus(id, status);
+
+    return task;
+  }*/
+
+  @Get('/:id')
+  async getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
+    const task = await this.tasksService.getTaskById(id);
 
     return task;
   }
