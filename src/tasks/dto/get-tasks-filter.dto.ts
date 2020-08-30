@@ -1,7 +1,7 @@
-import { TaskStatus } from "../task-status.enum";
-import { IsOptional, IsIn, IsNotEmpty } from "class-validator";
+import { IsOptional, IsIn, IsNotEmpty } from 'class-validator';
+import TaskStatus from '../task-status.enum';
 
-export class GetTasksFilterDTO {
+export default class GetTasksFilterDTO {
   @IsOptional()
   @IsIn([TaskStatus.OPEN, TaskStatus.IN_PROGRESS, TaskStatus.DONE])
   status: TaskStatus;
