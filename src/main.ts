@@ -6,7 +6,9 @@ import AppModule from './app.module';
 async function bootstrap() {
   const logger = new Logger('bootstrap');
 
-  const serverOrigin = config.get<string>('server.origin');
+  const serverOrigin =
+    'https://nestjs-task-management-frontend.s3-website-eu-west-1.amazonaws.com';
+
   const port = process.env.PORT || config.get<number>('server.port');
   const app = await NestFactory.create(AppModule);
 
