@@ -5,10 +5,11 @@ import TaskRepository from './task.repository';
 import GetTasksFilterDTO from './dto/get-tasks-filter.dto';
 import TaskStatus from './task-status.enum';
 
-const mockUser = { username: 'Test user' };
+const mockUser = { id: 12, username: 'Test user' };
 
 const mockTaskRepository = () => ({
   getTasks: jest.fn(),
+  findOne: jest.fn(),
 });
 
 describe('TasksService', () => {
@@ -42,6 +43,34 @@ describe('TasksService', () => {
 
       expect(taskRepository.getTasks).toHaveBeenCalled();
       expect(result).toEqual('someValue');
+    });
+  });
+
+  describe('getTaskById', () => {
+    it('should retrieve a specific task', async () => {
+      const mockTask = {
+        title: 'Test task',
+        description: 'Test desc',
+      };
+
+      taskRepository.findOne.mockResolvedValue(mockTask);
+
+      const result = await tasksService.getTaskById(1, mockUser);
+
+      expect(result).toEqual(mockTask);
+
+      expect(taskRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+          userId: mockUser.id,
+        },
+      });
+    });
+
+    it('should throws an error if the task is not found', () => {
+      taskRepository.findOne.mockResolvedValue(null);
+
+      expect(tasksService.getTaskById(1, mockUser)).rejects.toThrow();
     });
   });
 });
