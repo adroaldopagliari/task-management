@@ -4,12 +4,15 @@ import TasksService from './tasks.service';
 import TaskRepository from './task.repository';
 import GetTasksFilterDTO from './dto/get-tasks-filter.dto';
 import TaskStatus from './task-status.enum';
+import CreateTaskDTO from './dto/create-task.dto';
 
 const mockUser = { id: 12, username: 'Test user' };
 
 const mockTaskRepository = () => ({
   getTasks: jest.fn(),
   findOne: jest.fn(),
+  createTask: jest.fn(),
+  delete: jest.fn(),
 });
 
 describe('TasksService', () => {
@@ -71,6 +74,42 @@ describe('TasksService', () => {
       taskRepository.findOne.mockResolvedValue(null);
 
       expect(tasksService.getTaskById(1, mockUser)).rejects.toThrow();
+    });
+  });
+
+  describe('createTask', () => {
+    it('should create a task', async () => {
+      const mockTask: CreateTaskDTO = {
+        title: 'Test task',
+        description: 'Test desc',
+      };
+
+      taskRepository.createTask.mockResolvedValue(mockTask);
+
+      const result = await taskRepository.createTask(mockUser, mockTask);
+
+      expect(taskRepository.createTask).toHaveBeenCalled();
+
+      expect(result).toEqual(mockTask);
+    });
+  });
+
+  describe('deleteTask', () => {
+    it('should delete a task', async () => {
+      const mockTask: CreateTaskDTO = {
+        title: 'Test task',
+        description: 'Test desc',
+      };
+
+      taskRepository.createTask.mockResolvedValue({ id: 1 });
+
+      const task = await tasksService.createTask(mockTask, mockUser);
+
+      taskRepository.delete.mockResolvedValue({ affected: 1 });
+
+      await tasksService.deleteTask(task.id, mockUser);
+
+      expect(taskRepository.delete).toHaveBeenCalled();
     });
   });
 });
